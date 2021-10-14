@@ -22,13 +22,17 @@ public class FlockManager : MonoBehaviour
 	[Range(0.0f, 10.0f)]
 	public float alignDistance;
 	[Range(0.0f, 10.0f)]
+	public float separationDistance;
+	[Range(0.0f, 10.0f)]
 	public float boundDistance;
 
 	[Header("Weight Parameters")]
 	[Range(0.0f, 10.0f)]
-	public float cohesionWeight;
+	public float cohesionWeight;	
 	[Range(0.0f, 10.0f)]
 	public float alignWeight;
+	[Range(0.0f, 10.0f)]
+	public float separationWeight;
 	[Range(0.0f, 10.0f)]
 	public float boundWeight;
 

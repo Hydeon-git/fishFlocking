@@ -16,6 +16,7 @@ public class Flock : MonoBehaviour
     // Lists
     private List<Flock> cohesionNeighbours = new List<Flock>();
     private List<Flock> alignNeighbours = new List<Flock>();
+    private List<Flock> separationNeighbours = new List<Flock>();
 
     public void MoveFishes()
     {
@@ -23,6 +24,7 @@ public class Flock : MonoBehaviour
         // Add fishes to list if we find a neighbour
         cohesionNeighbours.Clear();        
         alignNeighbours.Clear();
+        separationNeighbours.Clear();
         
         for (int i = 0; i < flockManager.numFish; i++)
         {
@@ -40,6 +42,10 @@ public class Flock : MonoBehaviour
                 if (currentNeighbourDistance <= flockManager.alignDistance * flockManager.alignDistance)
                 {
                     alignNeighbours.Add(currentUnit);
+                } 
+                if (currentNeighbourDistance <= flockManager.separationDistance * flockManager.separationDistance)
+                {
+                    separationNeighbours.Add(currentUnit);
                 }
             }
         }
@@ -56,10 +62,11 @@ public class Flock : MonoBehaviour
         // Final calculation of the cohesion vector with the data obtained
         Vector3 cohesionVector =  Cohesion() * flockManager.cohesionWeight;
         Vector3 alignVector =  Align() * flockManager.alignWeight;
+        Vector3 separationVector =  Separation() * flockManager.separationWeight;
         Vector3 boundVector = Boundary() * flockManager.boundWeight;
         //-----------------------------------------------------------------------------------
         // Move Fishes according to parameters
-        Vector3 movementVector = cohesionVector + alignVector + boundVector;
+        Vector3 movementVector = cohesionVector + alignVector + separationVector + boundVector;
         movementVector = Vector3.SmoothDamp(transform.forward, movementVector, ref currentVelocity, damp);
         movementVector = movementVector.normalized * speed;
 
@@ -109,6 +116,25 @@ public class Flock : MonoBehaviour
         align = (align / nearlyNeighbours);
         align = align.normalized;
         return align;
+    }
+    
+    private Vector3 Separation()
+    {
+        // Calculate Cohesion Vector
+        Vector3 separation = Vector3.zero;
+
+        if (separationNeighbours.Count == 0) return Vector3.zero;
+
+        for (int i = 0; i < separationNeighbours.Count; i++)
+        {
+            float distance = Vector3.Distance(separationNeighbours[i].transform.position, transform.position);
+
+            if (IsNear(separationNeighbours[i].transform.position))
+            {              
+                separation -= (transform.position - separationNeighbours[i].transform.position) / (distance * distance);
+            }
+        }
+        return separation;
     }
 
     private Vector3 Boundary()
