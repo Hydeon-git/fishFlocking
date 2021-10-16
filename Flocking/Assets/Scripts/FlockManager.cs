@@ -38,8 +38,7 @@ public class FlockManager : MonoBehaviour
 
 
 	private void Start()
-    {
-		spawnLimit = new Vector3(5, 5, 5);
+    {		
 		allFish = new Flock[numFish];
 
 		for (int i = 0; i < numFish; i++)
